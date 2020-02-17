@@ -1,5 +1,5 @@
 FROM php:7.4-fpm-alpine
-LABEL maintainer="ucan-lab <info@u-can.tech>"
+LABEL maintainer="ororo <example@gmail.com>"
 
 SHELL ["/bin/ash", "-oeux", "pipefail", "-c"]
 
@@ -21,9 +21,9 @@ RUN apk update && \
     gcc=~9.2 \
     g++=~9.2 \
     make=~4.2 \
-    tzdata=2019c-r0 \
-    git=~2.24 && \
+    tzdata=2019c-r0 && \
   apk add --update --no-cache \
+    git=~2.24 \
     icu-dev=~64.2 \
     libzip-dev=~1.5 \
     oniguruma-dev=~6.9 && \
