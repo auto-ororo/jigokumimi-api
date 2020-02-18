@@ -33,7 +33,7 @@ services:
       - TZ=${TZ:-Asia/Tokyo}
 
   db:
-    image: mysql:8.0
+    image: mysql:8.0.15
     volumes:
       - db-store:/var/lib/mysql
       - ./logs:/var/log/mysql
@@ -48,7 +48,7 @@ services:
       - ${DB_PORT:-13306}:3306
 
   db-testing:
-    image: mysql:8.0
+    image: mysql:8.0.15
     volumes:
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     tmpfs:
