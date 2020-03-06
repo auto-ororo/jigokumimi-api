@@ -23,28 +23,55 @@ Visual Studio Codeの拡張機能「Remote Container」を用いて、Dockerコ�
 | ---------- | ------------ | ---------- | ------------------------ |
 | app        | php          | 7.4.2      | Laravel(APIプロジェクト) |
 | web        | nginx        | 1.17       | 公開用Webサーバー        |
-| db         | mysql        | 8.0.15     | 開発用DB                 |
-| db_testing | mysql        | 8.0.15     | 自動テスト用DB           |
+| db         | mariadb      | 10.4       | 開発用DB                 |
+| db_testing | mariadb      | 10.4       | 自動テスト用DB           |
 
 ### 構築手順
 
 1. リポジトリクローン
 
-    ```
+    ```bash
     $ git clone https://github.com/auto-ororo/vinyl-bucket-api.git
     ```
 
-2. クローンしたリポジトリをVisual Studio Codeで開く
+2. 設定ファイル(.env)をサンプルから作成
 
-3. コマンドパレット(Cmd + P)より下記を入力してDockerコンテナ起動
-
+    ```bash
+    $ cp .env.docker-compose.example .env # docker-compose
+    $ cp src/.env.laravel.example src/.env # Laravel
     ```
+
+    ※開発環境に応じて.env内の値を変更する（変更しなくても動く）
+
+3. クローンしたリポジトリをVisual Studio Codeで開く
+
+4. Visual Studio Codeのコマンドパレット(Cmd/Ctrl + P)より下記を入力してDockerコンテナ起動
+
+    ```bash
     Remote rebuild and Reopen in Container...
     ```
 
-4. 下記でAPIにアクセス
+5. (コンテナ)Composerモジュールインストール
 
+    ```bash
+    $ composer install
     ```
+
+6. (コンテナ)DBのマイグレーション
+
+    ```bash
+    $ php artisan migrate
+    ```
+
+7. (コンテナ)Laravelのアプリケーションキー生成
+
+    ```bash
+    $ php artisan key:generate
+    ```
+
+8. 下記URLでAPIにアクセス
+
+    ```bash
     http://127.0.0.1:(port)
     # (port)は「.env」の「WEB_PORT」で指定したポート
     ```
@@ -54,7 +81,7 @@ Visual Studio Codeの拡張機能「Remote Container」を用いて、Dockerコ�
 Todo
 
 ## デプロイ
- 
+
 Todo
 
 ## 作者
@@ -62,5 +89,5 @@ Todo
 Todo
 
 ## ライセンス
- 
+
 Todo

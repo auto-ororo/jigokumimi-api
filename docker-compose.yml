@@ -33,7 +33,7 @@ services:
       - TZ=${TZ:-Asia/Tokyo}
 
   db:
-    image: mysql:8.0.15
+    image: mariadb/server:10.4
     volumes:
       - db-store:/var/lib/mysql
       - ./logs:/var/log/mysql
@@ -48,7 +48,7 @@ services:
       - ${DB_PORT:-13306}:3306
 
   db-testing:
-    image: mysql:8.0.15
+    image: mariadb/server:10.4
     volumes:
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     tmpfs:
@@ -62,13 +62,6 @@ services:
       - TZ=${TZ:-Asia/Tokyo}
     ports:
       - ${DB_TESTING_PORT:-13307}:3306
-
-  node:
-    image: node:12.14-alpine
-    tty: true
-    volumes:
-      - ${PROJECT_PATH:-./src}:/work
-    working_dir: /work
 
   redis:
     image: redis:5.0-alpine
