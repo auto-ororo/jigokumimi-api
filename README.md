@@ -69,7 +69,13 @@ Visual Studio Codeの拡張機能「Remote Container」を用いて、Dockerコ�
     $ php artisan key:generate
     ```
 
-8. 下記URLでAPIにアクセス
+8. (コンテナ)LaravelのJWTキー生成
+
+    ```bash
+    $ php artisan jwt:secret
+    ```
+
+9. 下記URLでAPIにアクセス
 
     ```bash
     http://127.0.0.1:(port)
