@@ -65,8 +65,7 @@
             "@php artisan config:clear --env=testing",
             "@php artisan route:clear --env=testing",
             "@php artisan optimize:clear --env=testing",
-            "@php artisan migrate --env=testing",
-            "@php artisan migrate:refresh --env=testing",
+            "@php artisan migrate:fresh --env=testing",
             "@t"
         ],
         "t": [

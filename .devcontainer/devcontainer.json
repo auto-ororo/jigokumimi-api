@@ -28,8 +28,30 @@
     "php-cs-fixer.autoFixBySemicolon": true,
     "php-cs-fixer.rules": "@PSR2",
     "php-cs-fixer.formatHtml": true,
-    "php-cs-fixer.onsave": true
-	},
+    "php-cs-fixer.onsave": true,
+    "vim.insertModeKeyBindings": [
+      {
+        "before": [
+          "[",
+          "["
+        ],
+        "after": [
+          "<Esc>"
+        ]
+      }
+    ],
+    "vim.normalModeKeyBindings": [
+      {
+        "before": [
+          ";"
+        ],
+        "after": [
+          ":"
+        ]
+      }
+    ],
+    "vim.useSystemClipboard": true
+  },
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
