@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SongCaptureLog;
+use Exception;
 
 class SongsAroundController extends Controller
 {
@@ -20,8 +21,9 @@ class SongsAroundController extends Controller
 
     public function index(Request $request)
     {
-        $items = SongCaptureLog::all();
-        return response($items, 200);
+        $items = SongCaptureLog::orderBy('id')->take($this->DATA_LIMIT)->get();
+
+        return $this->responseToClient('OK', $items, $this->HTTP_OK);
     }
 
     public function create(Request $request)
@@ -31,9 +33,9 @@ class SongsAroundController extends Controller
             foreach ($items as $key => $item) {
                 SongCaptureLog::create($item);
             }
-            return response($request->all(), 200);
-        } catch (Throwable $th) {
-            return response($th, 500);
+            return $this->responseToClient('OK', null, $this->HTTP_OK);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }
     }
 }
