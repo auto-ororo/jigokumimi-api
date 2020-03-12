@@ -16,17 +16,4 @@ class SongCaptureLog extends Model
     ];
 
     protected $table = 'song_capture_logs';
-
-    /**
-     * The attributes that are define validation
-     *
-     * @var array
-     */
-    public $rules = [
-        'spotify_song_id' => 'required',
-        'spotify_user_id' => 'required',
-        'longitude'    => 'required',
-        'latitude' => 'required',
-        'popularity' => 'required'
-    ];
 }

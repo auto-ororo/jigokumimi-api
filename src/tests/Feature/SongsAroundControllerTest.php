@@ -119,8 +119,8 @@ class SongsAroundControllerTest extends TestCase
 
         // 登録を試みるとエラーレスポンスが返却されることを確認
         $response = $this->post('api/songs', $requestBody);
-        $response->assertStatus(500)->assertJson([
-            'message' => 'ERROR'
+        $response->assertStatus(400)->assertJson([
+            'status' => 400
         ]);
 
         // データが登録されていないことを確認

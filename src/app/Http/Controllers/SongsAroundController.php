@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SongsAroundRequest;
 use Illuminate\Http\Request;
 use App\Models\SongCaptureLog;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class SongsAroundController extends Controller
 {
@@ -46,14 +48,16 @@ class SongsAroundController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SongsAroundRequest $request)
     {
         try {
             $items = $request->all();
-            foreach ($items as $key => $item) {
-                SongCaptureLog::create($item);
-            }
-            return $this->responseToClient('OK', null, $this->HTTP_OK);
+            return DB::transaction(function () use ($items) {
+                foreach ($items as $key => $item) {
+                    SongCaptureLog::create($item);
+                }
+                return $this->responseToClient('OK', null, $this->HTTP_OK);
+            });
         } catch (Exception $e) {
             return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }
