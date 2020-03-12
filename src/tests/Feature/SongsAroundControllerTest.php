@@ -30,7 +30,7 @@ class SongsAroundControllerTest extends TestCase
         $song = factory(SongCaptureLog::class)->create();
 
         // 周辺曲情報を取得
-        $response = $this->get('api/song');
+        $response = $this->get('api/songs');
 
         // 登録内容とレスポンスが等しいことを確認
         $response->assertOk()->assertJson([
@@ -58,7 +58,7 @@ class SongsAroundControllerTest extends TestCase
         }
 
         // 周辺曲情報を取得
-        $response = $this->get('api/song');
+        $response = $this->get('api/songs');
 
         $data = $response['data'];
         $this->assertCount(25, $data);
@@ -88,13 +88,13 @@ class SongsAroundControllerTest extends TestCase
         ];
 
         // リクエストBodyを元に周辺曲情報が作成されることを確認
-        $response = $this->post('api/song', $requestBody);
+        $response = $this->post('api/songs', $requestBody);
         $response->assertOk()->assertJson([
             'message' => 'OK'
         ]);
 
         // リクエストBodyに設定した値が返却されることを確認
-        $response = $this->get('api/song');
+        $response = $this->get('api/songs');
         $response->assertOk()->assertJson([
             'message' => 'OK',
            'data' => $requestBody
@@ -118,7 +118,7 @@ class SongsAroundControllerTest extends TestCase
         ];
 
         // 登録を試みるとエラーレスポンスが返却されることを確認
-        $response = $this->post('api/song', $requestBody);
+        $response = $this->post('api/songs', $requestBody);
         $response->assertStatus(500)->assertJson([
             'message' => 'ERROR'
         ]);
