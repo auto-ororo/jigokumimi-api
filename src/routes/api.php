@@ -23,3 +23,11 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::get('me', 'AuthController@me');
 });
+
+Route::group([
+    'middleware' => 'api',
+], function ($router) {
+    // Route::get('song', 'SongsAroundController@index');
+    // Route::post('song', 'SongsAroundController@store');
+    Route::resource('songs', 'SongsAroundController');
+});

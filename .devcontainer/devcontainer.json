@@ -19,7 +19,7 @@
 	"workspaceFolder": "/work/src",
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": { 
+	"settings": {
     "terminal.integrated.shell.linux": null,
     "php.validate.executablePath": "/usr/local/bin/php",
     "php.executablePath": "/usr/local/bin/php",
@@ -29,7 +29,7 @@
     "php-cs-fixer.rules": "@PSR2",
     "php-cs-fixer.formatHtml": true,
     "php-cs-fixer.onsave": true
-	},
+  },
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
