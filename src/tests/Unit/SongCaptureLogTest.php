@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\SongCaptureLog;
+use App\Models\User;
 
 class SongCaptureLogTest extends TestCase
 {
@@ -86,5 +87,61 @@ class SongCaptureLogTest extends TestCase
 
         // スカイツリーの周辺曲情報が取得できていることを確認
         $this->assertEquals($song['id'], $withInSong['id']);
+    }
+
+    /**
+     * @test
+     */
+    public function 指定ユーザーが周辺曲情報から除外されること()
+    {
+        $targetspotifyuserid = 'asdffdsa';
+
+        factory(songcapturelog::class)->create([
+            'spotify_user_id' => $targetspotifyuserid
+        ]);
+
+        $includespotifyuserid = '12345678';
+
+        $targetsong = factory(songcapturelog::class)->create([
+            'spotify_user_id' => $includespotifyuserid
+        ]);
+        $withinsongs = songcapturelog::excludeuser($targetspotifyuserid)->get();
+
+        $this->assertequals(1, count($withinsongs));
+
+        // スカイツリーの周辺曲情報が取得できていることを確認
+        $this->assertequals($targetsong['id'], $withinsongs[0]['id']);
+    }
+
+    /**
+     * @test
+     */
+    public function 曲ごとに人気度が集計されること()
+    {
+        $targetSpotifySongId1 = '111';
+        $targetSpotifySongId2 = '222';
+
+        // 同一曲IDで人気度の異なるデータを作成
+        $numArray = [20, 80, 50];
+        foreach ($numArray as $el) {
+            factory(songcapturelog::class)->create([
+                'spotify_song_id' => $targetSpotifySongId1,
+                'popularity' => $el
+            ]);
+        }
+
+        // 上で作成した曲とは異なるIDを持つデータを作成
+        factory(songcapturelog::class)->create([
+            'spotify_song_id' => $targetSpotifySongId2,
+            'popularity' => 15
+        ]);
+
+        $songs = songcapturelog::sumPopularityBySongs()->orderBy('popularity', 'desc')->get();
+
+        // 曲IDごとに集計されていることを確認
+        $this->assertequals(2, count($songs));
+
+        // 人気度が集計されていることを確認
+        $this->assertequals(150, $songs[0]['popularity']);
     }
 }
