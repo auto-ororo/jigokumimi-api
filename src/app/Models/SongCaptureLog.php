@@ -37,10 +37,10 @@ class SongCaptureLog extends Model
      */
     public function scopeSumPopularityBySongs($query)
     {
-        // 全カラム、及び曲ごとの人気度を集計するSELECT文
+        // 曲ごとの人気度を集計するSELECT文
         $selectStr =<<<___SELECT_SQL___
-        *, 
-        sum(popularity) as popurality
+        spotify_song_id,
+        sum(popularity) as popularity
         ___SELECT_SQL___;
 
         // 曲ごとに集計

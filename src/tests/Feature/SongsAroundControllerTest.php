@@ -23,26 +23,24 @@ class SongsAroundControllerTest extends TestCase
     /**
      * @test
      */
-    public function 登録した周辺曲情報を取得できること()
+    public function 登録した周辺曲情報の人気度を取得できること()
     {
-
         // 周辺曲情報を登録
         $song = factory(SongCaptureLog::class)->create();
 
-        // 周辺曲情報を取得
-        $response = $this->get('api/songs');
+        $latitude = $song['latitude'];
+        $longitude = $song['longitude'];
+        $excludeSongId = $song['spotify_song_id'] . 'exclude';
+        $distance = 1000;
+
+        // 登録した曲以外の曲IDを指定して周辺曲情報を取得
+        $response = $this->get("api/songs/$excludeSongId/$latitude/$longitude/$distance");
 
         // 登録内容とレスポンスが等しいことを確認
         $response->assertOk()->assertJson([
             'data' => [[
-                'id' => $song['id'],
                 'spotify_song_id' => $song['spotify_song_id'],
-                'spotify_user_id' => $song['spotify_user_id'],
-                'latitude' => $song['latitude'],
-                'longitude' => $song['longitude'],
                 'popularity' => $song['popularity'],
-                'created_at' => $song['created_at'],
-                'updated_at' => $song['updated_at'],
             ]]
         ]);
     }
@@ -52,13 +50,21 @@ class SongsAroundControllerTest extends TestCase
      */
     public function 周辺曲情報の最大取得件数が25件以下であること()
     {
+        $latitudeOfSkyTree = 35.709544;
+        $longitudeOfSkyTree = 139.809049;
+        $excludeSongId = '222';
+        $distance = 1000;
+
         // 周辺曲情報を30件登録
         for ($i=0; $i < 30; $i++) {
-            factory(SongCaptureLog::class)->create();
+            factory(SongCaptureLog::class)->create([
+                'latitude' =>  $latitudeOfSkyTree,
+                'longitude' => $longitudeOfSkyTree
+            ]);
         }
 
-        // 周辺曲情報を取得
-        $response = $this->get('api/songs');
+        // 登録した曲以外の曲IDを指定して周辺曲情報を取得
+        $response = $this->get("api/songs/$excludeSongId/$latitudeOfSkyTree/$longitudeOfSkyTree/$distance");
 
         $data = $response['data'];
         $this->assertCount(25, $data);
@@ -93,12 +99,19 @@ class SongsAroundControllerTest extends TestCase
             'message' => 'OK'
         ]);
 
-        // リクエストBodyに設定した値が返却されることを確認
-        $response = $this->get('api/songs');
-        $response->assertOk()->assertJson([
-            'message' => 'OK',
-           'data' => $requestBody
-        ]);
+        $songs = SongCaptureLog::orderBy('id', 'asc')->get();
+
+        // データが2件登録されていることを確認
+        $this->assertEquals(2, count($songs));
+
+        // 登録内容も併せて確認する
+        for ($i=0; $i < 2; $i++) {
+            $this->assertEquals($songs[$i]['spotify_song_id'], $requestBody[$i]['spotify_song_id']);
+            $this->assertEquals($songs[$i]['spotify_user_id'], $requestBody[$i]['spotify_user_id']);
+            $this->assertEquals($songs[$i]['longitude'], $requestBody[$i]['longitude']);
+            $this->assertEquals($songs[$i]['latitude'], $requestBody[$i]['latitude']);
+            $this->assertEquals($songs[$i]['popularity'], $requestBody[$i]['popularity']);
+        }
     }
 
     /**
