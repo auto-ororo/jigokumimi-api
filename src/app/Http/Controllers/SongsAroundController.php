@@ -25,11 +25,18 @@ class SongsAroundController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, $id, $latitude, $longitude, $distance)
     {
-        $items = SongCaptureLog::orderBy('id')->take($this->DATA_LIMIT)->get();
+        try {
+            $items = SongCaptureLog::excludeUser($id)
+                        ->withinDistance($latitude, $longitude, $distance)
+                        ->sumPopularityBySongs()
+                        ->orderBy('popularity', 'desc')->take($this->DATA_LIMIT)->get();
 
-        return $this->responseToClient('OK', $items, $this->HTTP_OK);
+            return $this->responseToClient('OK', $items, $this->HTTP_OK);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -53,7 +60,7 @@ class SongsAroundController extends Controller
         try {
             $items = $request->all();
             return DB::transaction(function () use ($items) {
-                foreach ($items as $key => $item) {
+                foreach ($items as $item) {
                     SongCaptureLog::create($item);
                 }
                 return $this->responseToClient('OK', null, $this->HTTP_OK);
