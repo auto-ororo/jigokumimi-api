@@ -25,15 +25,34 @@ class SongsAroundController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $id, $latitude, $longitude, $distance)
+    public function index(Request $request)
     {
         try {
-            $items = SongCaptureLog::excludeUser($id)
-                        ->withinDistance($latitude, $longitude, $distance)
+            // パラメータを元に周囲で聴かれている曲を取得
+            $items = SongCaptureLog::excludeUser($request->input('userId'))
+                        ->withinDistance(
+                            $request->input('latitude'),
+                            $request->input('longitude'),
+                            $request->input('distance')
+                        )
                         ->sumPopularityBySongs()
-                        ->orderBy('popularity', 'desc')->take($this->DATA_LIMIT)->get();
+                        ->orderBy('popularity', 'desc')
+                        ->take($this->DATA_LIMIT)
+                        ->get();
 
-            return $this->responseToClient('OK', $items, $this->HTTP_OK);
+            // DBから取得したデータを元にレスポンスを作成
+            $responseItems = [];
+            $rankIndex = 1;
+            foreach ($items as $item) {
+                $responseItem = [];
+                $responseItem['rank'] = $rankIndex;
+                $responseItem['spotify_song_id'] = $item['spotify_song_id'];
+                $responseItem['popularity'] = (int)$item['popularity'];
+                $responseItems[] = $responseItem;
+                $rankIndex++;
+            }
+
+            return $this->responseToClient('OK', $responseItems, $this->HTTP_OK);
         } catch (Exception $e) {
             return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }

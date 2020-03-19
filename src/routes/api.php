@@ -27,6 +27,6 @@ Route::group([
 Route::group([
     'middleware' => 'api',
 ], function ($router) {
-    Route::get('songs/{id}/{latitude}/{longitude}/{distance}', 'SongsAroundController@index');
+    Route::get('songs', 'SongsAroundController@index');
     Route::post('songs', 'SongsAroundController@store');
 });
