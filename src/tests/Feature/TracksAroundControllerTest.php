@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\SongCaptureLog;
+use App\Models\TrackCaptureLog;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 
-class SongsAroundControllerTest extends TestCase
+class TracksAroundControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,11 +26,11 @@ class SongsAroundControllerTest extends TestCase
     public function 登録した周辺曲情報の人気度を取得できること()
     {
         // 周辺曲情報を登録
-        $song = factory(SongCaptureLog::class)->create();
+        $track = factory(TrackCaptureLog::class)->create();
 
-        $latitude = $song['latitude'];
-        $longitude = $song['longitude'];
-        $excludeUserId = $song['spotify_user_id'] . 'exclude';
+        $latitude = $track['latitude'];
+        $longitude = $track['longitude'];
+        $excludeUserId = $track['spotify_user_id'] . 'exclude';
         $distance = 1000;
 
         // $params = [
@@ -41,13 +41,13 @@ class SongsAroundControllerTest extends TestCase
         // ];
 
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/songs?userId=${excludeUserId}&latitude=${latitude}&longitude=${longitude}&distance=${distance}");
+        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitude}&longitude=${longitude}&distance=${distance}");
 
         // 登録内容とレスポンスが等しいことを確認
         $response->assertOk()->assertJson([
             'data' => [[
-                'spotify_song_id' => $song['spotify_song_id'],
-                'popularity' => $song['popularity'],
+                'spotify_track_id' => $track['spotify_track_id'],
+                'popularity' => $track['popularity'],
             ]]
         ]);
     }
@@ -64,14 +64,14 @@ class SongsAroundControllerTest extends TestCase
 
         // 周辺曲情報を30件登録
         for ($i=0; $i < 30; $i++) {
-            factory(SongCaptureLog::class)->create([
+            factory(TrackCaptureLog::class)->create([
                 'latitude' =>  $latitudeOfSkyTree,
                 'longitude' => $longitudeOfSkyTree
             ]);
         }
 
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/songs?userId=${excludeUserId}&latitude=${latitudeOfSkyTree}&longitude=${longitudeOfSkyTree}&distance=${distance}");
+        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitudeOfSkyTree}&longitude=${longitudeOfSkyTree}&distance=${distance}");
 
         $data = $response['data'];
         $this->assertCount(25, $data);
@@ -85,14 +85,14 @@ class SongsAroundControllerTest extends TestCase
         // リクエストBody作成
         $requestBody = [
             [
-                'spotify_song_id' => '1234567890abcdefg',
+                'spotify_track_id' => '1234567890abcdefg',
                 'spotify_user_id' => 'gfedcba0987654321',
                 'longitude' => 12.345678,
                 'latitude' => 21.345678,
                 'popularity' => 24
             ],
             [
-              'spotify_song_id' => '21234567890abcdefg',
+              'spotify_track_id' => '21234567890abcdefg',
                 'spotify_user_id' => '2gfedcba0987654321',
                 'longitude' => 212.345678,
                 'latitude' => 221.345678,
@@ -101,23 +101,23 @@ class SongsAroundControllerTest extends TestCase
         ];
 
         // リクエストBodyを元に周辺曲情報が作成されることを確認
-        $response = $this->post('api/songs', $requestBody);
+        $response = $this->post('api/tracks', $requestBody);
         $response->assertOk()->assertJson([
             'message' => 'OK'
         ]);
 
-        $songs = SongCaptureLog::orderBy('id', 'asc')->get();
+        $tracks = TrackCaptureLog::orderBy('id', 'asc')->get();
 
         // データが2件登録されていることを確認
-        $this->assertEquals(2, count($songs));
+        $this->assertEquals(2, count($tracks));
 
         // 登録内容も併せて確認する
         for ($i=0; $i < 2; $i++) {
-            $this->assertEquals($songs[$i]['spotify_song_id'], $requestBody[$i]['spotify_song_id']);
-            $this->assertEquals($songs[$i]['spotify_user_id'], $requestBody[$i]['spotify_user_id']);
-            $this->assertEquals($songs[$i]['longitude'], $requestBody[$i]['longitude']);
-            $this->assertEquals($songs[$i]['latitude'], $requestBody[$i]['latitude']);
-            $this->assertEquals($songs[$i]['popularity'], $requestBody[$i]['popularity']);
+            $this->assertEquals($tracks[$i]['spotify_track_id'], $requestBody[$i]['spotify_track_id']);
+            $this->assertEquals($tracks[$i]['spotify_user_id'], $requestBody[$i]['spotify_user_id']);
+            $this->assertEquals($tracks[$i]['longitude'], $requestBody[$i]['longitude']);
+            $this->assertEquals($tracks[$i]['latitude'], $requestBody[$i]['latitude']);
+            $this->assertEquals($tracks[$i]['popularity'], $requestBody[$i]['popularity']);
         }
     }
 
@@ -129,7 +129,7 @@ class SongsAroundControllerTest extends TestCase
         // 入力情報が不足しているリクエストBody作成
         $requestBody = [
             [
-                'spotify_song_id' => '1234567890abcdefg',
+                'spotify_track_id' => '1234567890abcdefg',
                 'spotify_user_id' => 'gfedcba0987654321',
                 'longitude' => 12.345678,
                 'latitude' => 21.345678
@@ -138,13 +138,13 @@ class SongsAroundControllerTest extends TestCase
         ];
 
         // 登録を試みるとエラーレスポンスが返却されることを確認
-        $response = $this->post('api/songs', $requestBody);
+        $response = $this->post('api/tracks', $requestBody);
         $response->assertStatus(400)->assertJson([
             'status' => 400
         ]);
 
         // データが登録されていないことを確認
-        $song = SongCaptureLog::all();
-        $this->assertEquals(0, count($song));
+        $track = TrackCaptureLog::all();
+        $this->assertEquals(0, count($track));
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class SongsAroundRequest extends FormRequest
+class TracksAroundRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,7 @@ class SongsAroundRequest extends FormRequest
     public function rules()
     {
         return [
-            '*.spotify_song_id' => 'required',
+            '*.spotify_track_id' => 'required',
             '*.spotify_user_id' => 'required',
             '*.longitude'    => 'required',
             '*.latitude' => 'required',

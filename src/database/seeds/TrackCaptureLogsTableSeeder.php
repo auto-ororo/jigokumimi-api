@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\SongCaptureLog;
+use App\Models\TrackCaptureLog;
 
-class SongCaptureLogsTableSeeder extends Seeder
+class TrackCaptureLogsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,11 +13,11 @@ class SongCaptureLogsTableSeeder extends Seeder
     public function run()
     {
         //一括削除
-        SongCaptureLog::truncate();
+        TrackCaptureLog::truncate();
 
         //特定のデータを追加
-        SongCaptureLog::create([
-            'spotify_song_id' => '2uNKRyEbaWCzKAX5c31wwn',
+        TrackCaptureLog::create([
+            'spotify_track_id' => '2uNKRyEbaWCzKAX5c31wwn',
             'spotify_user_id' => 'ueue55sss2v3568ej83tvsgme',
             'longitude' => '139.8002856',
             'latitude' => '35.6947093',

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSongsTable extends Migration
+class CreateTracksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateSongsTable extends Migration
      */
     public function up()
     {
-        Schema::create('song_capture_logs', function (Blueprint $table) {
+        Schema::create('track_capture_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('spotify_song_id');
+            $table->string('spotify_track_id');
             $table->string('spotify_user_id');
             $table->double('longitude');
             $table->double('latitude');
@@ -32,6 +32,6 @@ class CreateSongsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('songs');
+        Schema::dropIfExists('tracks');
     }
 }
