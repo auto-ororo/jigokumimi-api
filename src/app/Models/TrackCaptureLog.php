@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SongCaptureLog extends Model
+class TrackCaptureLog extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,10 +12,10 @@ class SongCaptureLog extends Model
      * @var array
      */
     protected $fillable = [
-        'spotify_song_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
+        'spotify_track_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
     ];
 
-    protected $table = 'song_capture_logs';
+    protected $table = 'track_capture_logs';
 
     /**
      * 指定ユーザーを除外する
@@ -35,17 +35,17 @@ class SongCaptureLog extends Model
      * @param [type] $query
      * @return void
      */
-    public function scopeSumPopularityBySongs($query)
+    public function scopeSumPopularityByTracks($query)
     {
         // 曲ごとの人気度を集計するSELECT文
         $selectStr =<<<___SELECT_SQL___
-        spotify_song_id,
+        spotify_track_id,
         sum(popularity) as popularity
         ___SELECT_SQL___;
 
         // 曲ごとに集計
         return $query->selectRaw($selectStr)
-                     ->groupBy('spotify_song_id');
+                     ->groupBy('spotify_track_id');
     }
 
     /**

@@ -5,10 +5,10 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use App\Models\SongCaptureLog;
+use App\Models\TrackCaptureLog;
 use App\Models\User;
 
-class SongCaptureLogTest extends TestCase
+class TrackCaptureLogTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -28,7 +28,7 @@ class SongCaptureLogTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $song = factory(SongCaptureLog::class)->create([
+        $track = factory(TrackCaptureLog::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
@@ -37,10 +37,10 @@ class SongCaptureLogTest extends TestCase
         $latitudeOfOshiageStation = 35.710332;
         $longitudeOfOshiageStation = 139.813297;
         $distance = 500;
-        $withInSong = SongCaptureLog::withinDistance($latitudeOfOshiageStation, $longitudeOfOshiageStation, $distance)->first();
+        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfOshiageStation, $longitudeOfOshiageStation, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
-        $this->assertEquals($song['id'], $withInSong['id']);
+        $this->assertEquals($track['id'], $withInTrack['id']);
     }
 
     /**
@@ -52,7 +52,7 @@ class SongCaptureLogTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $song = factory(SongCaptureLog::class)->create([
+        $track = factory(TrackCaptureLog::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
@@ -61,10 +61,10 @@ class SongCaptureLogTest extends TestCase
         $latitudeOfTokyoTower = 35.658580;
         $longitudeOfTokyoTower = 139.745433;
         $distance = 500;
-        $withInSong = SongCaptureLog::withinDistance($latitudeOfTokyoTower, $longitudeOfTokyoTower, $distance)->first();
+        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfTokyoTower, $longitudeOfTokyoTower, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
-        $this->assertNull($withInSong);
+        $this->assertNull($withInTrack);
     }
 
     /**
@@ -76,17 +76,17 @@ class SongCaptureLogTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $song = factory(SongCaptureLog::class)->create([
+        $track = factory(TrackCaptureLog::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
 
         // 基準となる位置情報をスカイツリーに設定し､半径500m以内の周辺曲情報を検索
         $distance = 500;
-        $withInSong = SongCaptureLog::withinDistance($latitudeOfSkyTree, $longitudeOfSkyTree, $distance)->first();
+        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfSkyTree, $longitudeOfSkyTree, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
-        $this->assertEquals($song['id'], $withInSong['id']);
+        $this->assertEquals($track['id'], $withInTrack['id']);
     }
 
     /**
@@ -96,21 +96,21 @@ class SongCaptureLogTest extends TestCase
     {
         $targetspotifyuserid = 'asdffdsa';
 
-        factory(songcapturelog::class)->create([
+        factory(trackcapturelog::class)->create([
             'spotify_user_id' => $targetspotifyuserid
         ]);
 
         $includespotifyuserid = '12345678';
 
-        $targetsong = factory(songcapturelog::class)->create([
+        $targettrack = factory(trackcapturelog::class)->create([
             'spotify_user_id' => $includespotifyuserid
         ]);
-        $withinsongs = songcapturelog::excludeuser($targetspotifyuserid)->get();
+        $withintracks = trackcapturelog::excludeuser($targetspotifyuserid)->get();
 
-        $this->assertequals(1, count($withinsongs));
+        $this->assertequals(1, count($withintracks));
 
         // スカイツリーの周辺曲情報が取得できていることを確認
-        $this->assertequals($targetsong['id'], $withinsongs[0]['id']);
+        $this->assertequals($targettrack['id'], $withintracks[0]['id']);
     }
 
     /**
@@ -118,30 +118,30 @@ class SongCaptureLogTest extends TestCase
      */
     public function 曲ごとに人気度が集計されること()
     {
-        $targetSpotifySongId1 = '111';
-        $targetSpotifySongId2 = '222';
+        $targetSpotifyTrackId1 = '111';
+        $targetSpotifyTrackId2 = '222';
 
         // 同一曲IDで人気度の異なるデータを作成
         $numArray = [20, 80, 50];
         foreach ($numArray as $el) {
-            factory(songcapturelog::class)->create([
-                'spotify_song_id' => $targetSpotifySongId1,
+            factory(trackcapturelog::class)->create([
+                'spotify_track_id' => $targetSpotifyTrackId1,
                 'popularity' => $el
             ]);
         }
 
         // 上で作成した曲とは異なるIDを持つデータを作成
-        factory(songcapturelog::class)->create([
-            'spotify_song_id' => $targetSpotifySongId2,
+        factory(trackcapturelog::class)->create([
+            'spotify_track_id' => $targetSpotifyTrackId2,
             'popularity' => 15
         ]);
 
-        $songs = songcapturelog::sumPopularityBySongs()->orderBy('popularity', 'desc')->get();
+        $tracks = trackcapturelog::sumPopularityByTracks()->orderBy('popularity', 'desc')->get();
 
         // 曲IDごとに集計されていることを確認
-        $this->assertequals(2, count($songs));
+        $this->assertequals(2, count($tracks));
 
         // 人気度が集計されていることを確認
-        $this->assertequals(150, $songs[0]['popularity']);
+        $this->assertequals(150, $tracks[0]['popularity']);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SongsAroundRequest;
+use App\Http\Requests\TracksAroundRequest;
 use Illuminate\Http\Request;
-use App\Models\SongCaptureLog;
+use App\Models\TrackCaptureLog;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class SongsAroundController extends Controller
+class TracksAroundController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,13 +29,13 @@ class SongsAroundController extends Controller
     {
         try {
             // パラメータを元に周囲で聴かれている曲を取得
-            $items = SongCaptureLog::excludeUser($request->input('userId'))
+            $items = TrackCaptureLog::excludeUser($request->input('userId'))
                         ->withinDistance(
                             $request->input('latitude'),
                             $request->input('longitude'),
                             $request->input('distance')
                         )
-                        ->sumPopularityBySongs()
+                        ->sumPopularityByTracks()
                         ->orderBy('popularity', 'desc')
                         ->take($this->DATA_LIMIT)
                         ->get();
@@ -46,7 +46,7 @@ class SongsAroundController extends Controller
             foreach ($items as $item) {
                 $responseItem = [];
                 $responseItem['rank'] = $rankIndex;
-                $responseItem['spotify_song_id'] = $item['spotify_song_id'];
+                $responseItem['spotify_track_id'] = $item['spotify_track_id'];
                 $responseItem['popularity'] = (int)$item['popularity'];
                 $responseItems[] = $responseItem;
                 $rankIndex++;
@@ -74,13 +74,13 @@ class SongsAroundController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SongsAroundRequest $request)
+    public function store(TracksAroundRequest $request)
     {
         try {
             $items = $request->all();
             return DB::transaction(function () use ($items) {
                 foreach ($items as $item) {
-                    SongCaptureLog::create($item);
+                    TrackCaptureLog::create($item);
                 }
                 return $this->responseToClient('OK', null, $this->HTTP_OK);
             });
