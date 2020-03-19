@@ -30,11 +30,18 @@ class SongsAroundControllerTest extends TestCase
 
         $latitude = $song['latitude'];
         $longitude = $song['longitude'];
-        $excludeSongId = $song['spotify_song_id'] . 'exclude';
+        $excludeUserId = $song['spotify_user_id'] . 'exclude';
         $distance = 1000;
 
+        // $params = [
+        //     'userId' => $excludeUserId,
+        //     'latitude' => $latitude,
+        //     'longitude' => $longitude,
+        //     'distance' => $distance
+        // ];
+
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/songs/$excludeSongId/$latitude/$longitude/$distance");
+        $response = $this->get("api/songs?userId=${excludeUserId}&latitude=${latitude}&longitude=${longitude}&distance=${distance}");
 
         // 登録内容とレスポンスが等しいことを確認
         $response->assertOk()->assertJson([
@@ -52,7 +59,7 @@ class SongsAroundControllerTest extends TestCase
     {
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $excludeSongId = '222';
+        $excludeUserId = '222';
         $distance = 1000;
 
         // 周辺曲情報を30件登録
@@ -64,7 +71,7 @@ class SongsAroundControllerTest extends TestCase
         }
 
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/songs/$excludeSongId/$latitudeOfSkyTree/$longitudeOfSkyTree/$distance");
+        $response = $this->get("api/songs?userId=${excludeUserId}&latitude=${latitudeOfSkyTree}&longitude=${longitudeOfSkyTree}&distance=${distance}");
 
         $data = $response['data'];
         $this->assertCount(25, $data);
