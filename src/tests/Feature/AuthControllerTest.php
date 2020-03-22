@@ -45,7 +45,7 @@ class AuthControllerTest extends TestCase
 
         $headers = [
             'Accept' => 'application/json' ,
-            'Authorization' => 'Bearer ' . $response['access_token']
+            'Authorization' => 'Bearer ' . $response['data']['access_token']
         ];
 
         // ログアウト
@@ -151,10 +151,12 @@ class AuthControllerTest extends TestCase
 
         // リフレッシュ成功
         $response->assertOk()->assertJson([
-            'access_token' => true
+           'data' => [ 
+               'access_token' => true
+            ]
         ]);
 
-        $afterRefreshToken = $response['access_token'];
+        $afterRefreshToken = $response['data']['access_token'];
     
         // レスポンスのトークンがリフレッシュ前のトークンと異なることを確認
         $this->assertNotEquals($beforeRefreshToken, $afterRefreshToken);
@@ -178,12 +180,14 @@ class AuthControllerTest extends TestCase
 
         // レスポンスのユーザー情報が実際のユーザー情報と等しいことを確認
         $response->assertOk()->assertJson([
-            'id' => $user['id'],
-            'name' => $user['name'],
-            'email' => $user['email'],
-            'email_verified_at' => $user['email_verified_at'],
-            'created_at' => $user['created_at'],
-            'updated_at' => $user['updated_at'],
+            'data' => [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'email_verified_at' => $user['email_verified_at'],
+                'created_at' => $user['created_at'],
+                'updated_at' => $user['updated_at'],
+            ]
         ]);
     }
 }
