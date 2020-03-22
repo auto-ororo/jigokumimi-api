@@ -23,6 +23,52 @@ class AuthControllerTest extends TestCase
     /**
      * @test
      */
+    public function ユーザーの新規登録ができること()
+    {
+        $inputName = 'hogetaro';
+        $inputEmail = 'aaa@gmail.com';
+        $inputPassword = '12345678';
+        $inputPasswordRetype = '12345678';
+
+
+        $data = [ # 登録するユーザー情報 
+            'name' =>  $inputName,       
+            'email' => $inputEmail,
+            'password' => $inputPassword,
+            'password_confirmation' => $inputPasswordRetype
+        ];
+
+        // 新規登録
+        $response = $this->post('api/auth/create', $data);
+        
+        // 新規登録成功
+        $response->assertOk()->assertJson([
+            'data' => [
+                'name' =>  $inputName,       
+                'email' => $inputEmail
+            ]
+        ]);
+
+        $loginData = [ #  ログイン用のデータ
+            'email' => $inputEmail,
+            'password' => $inputPassword
+        ];
+
+        // ログイン
+        $response = $this->post('api/auth/login', $loginData);
+        
+        // ログイン成功
+        $response->assertOk();
+
+        // DBに登録されているユーザー情報が入力情報と等しいことを確認
+        $dbUser = User::all()[0];
+        $this->assertEquals($dbUser['name'], $inputName);
+        $this->assertEquals($dbUser['email'], $inputEmail);
+    }
+
+    /**
+     * @test
+     */
     public function ログイン・ログアウトができること()
     {
         $passStr = 'test1111';

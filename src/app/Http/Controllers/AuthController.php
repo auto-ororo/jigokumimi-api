@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthRequest;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -15,7 +17,22 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'create']]);
+    }
+
+    /**
+     * ユーザー登録
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function create(AuthRequest $request)
+    {
+        $user = new User;
+        $user->fill($request->all());
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return $this->responseToClient('OK', $user, 200);
     }
 
     /**

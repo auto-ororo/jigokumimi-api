@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TracksAroundRequest extends FormRequest
+class AuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,11 +26,10 @@ class TracksAroundRequest extends FormRequest
     public function rules()
     {
         return [
-            '*.spotify_track_id' => 'required',
-            '*.spotify_user_id' => 'required',
-            '*.longitude'    => 'required',
-            '*.latitude' => 'required',
-            '*.popularity' => 'required'
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:8|max:255|confirmed',
+            'password_confirmation' => 'required|string|min:8|max:255',
         ];
     }
     protected function failedValidation(Validator $validator)
