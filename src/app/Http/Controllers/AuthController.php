@@ -28,7 +28,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->responseToClient('メールアドレス、またはパスワードが異なります。', null, 401);
         }
 
         return $this->respondWithToken($token);
@@ -44,7 +44,7 @@ class AuthController extends Controller
         $tmp = auth('api');
         $udata = $tmp->user();
 
-        return response()->json($udata);
+        return $this->responseToClient('OK', $udata, 200);
     }
 
     /**
@@ -57,7 +57,7 @@ class AuthController extends Controller
     {
         auth('api')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->responseToClient('Successfully logged out', null, 200);
     }
 
     /**
@@ -79,10 +79,11 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
+        $data = [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
+        ];
+        return $this->responseToClient('Token Generated', $data, 200);
     }
 }
