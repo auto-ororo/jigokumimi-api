@@ -26,7 +26,7 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
 ], function ($router) {
     Route::get('tracks', 'TracksAroundController@index');
     Route::post('tracks', 'TracksAroundController@store');

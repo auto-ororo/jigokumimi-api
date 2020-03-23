@@ -33,15 +33,15 @@ class TracksAroundControllerTest extends TestCase
         $excludeUserId = $track['spotify_user_id'] . 'exclude';
         $distance = 1000;
 
-        // $params = [
-        //     'userId' => $excludeUserId,
-        //     'latitude' => $latitude,
-        //     'longitude' => $longitude,
-        //     'distance' => $distance
-        // ];
+        $user = factory(User::class)->create();
+        $this->actingAs($user);
+
+        $headers = [
+            'Accept' => 'application/json' ,
+        ];
 
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitude}&longitude=${longitude}&distance=${distance}");
+        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitude}&longitude=${longitude}&distance=${distance}", $headers);
 
         // 登録内容とレスポンスが等しいことを確認
         $response->assertOk()->assertJson([
@@ -70,8 +70,15 @@ class TracksAroundControllerTest extends TestCase
             ]);
         }
 
+        $user = factory(User::class)->create();
+        $this->actingAs($user);
+
+        $headers = [
+            'Accept' => 'application/json' ,
+        ];
+
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
-        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitudeOfSkyTree}&longitude=${longitudeOfSkyTree}&distance=${distance}");
+        $response = $this->get("api/tracks?userId=${excludeUserId}&latitude=${latitudeOfSkyTree}&longitude=${longitudeOfSkyTree}&distance=${distance}", $headers);
 
         $data = $response['data'];
         $this->assertCount(25, $data);
@@ -100,8 +107,15 @@ class TracksAroundControllerTest extends TestCase
             ]
         ];
 
+        $user = factory(User::class)->create();
+        $this->actingAs($user);
+
+        $headers = [
+            'Accept' => 'application/json' ,
+        ];
+
         // リクエストBodyを元に周辺曲情報が作成されることを確認
-        $response = $this->post('api/tracks', $requestBody);
+        $response = $this->post('api/tracks', $requestBody, $headers);
         $response->assertOk()->assertJson([
             'message' => 'OK'
         ]);
@@ -137,11 +151,15 @@ class TracksAroundControllerTest extends TestCase
             ]
         ];
 
+        $user = factory(User::class)->create();
+        $this->actingAs($user);
+
+        $headers = [ 'Accept' => 'application/json' ,
+        ];
+
         // 登録を試みるとエラーレスポンスが返却されることを確認
-        $response = $this->post('api/tracks', $requestBody);
-        $response->assertStatus(400)->assertJson([
-            'status' => 400
-        ]);
+        $response = $this->post('api/tracks', $requestBody, $headers);
+        $response->assertStatus(400);
 
         // データが登録されていないことを確認
         $track = TrackCaptureLog::all();
