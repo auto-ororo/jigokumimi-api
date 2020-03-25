@@ -30,4 +30,6 @@ Route::group([
 ], function ($router) {
     Route::get('tracks', 'TracksAroundController@index');
     Route::post('tracks', 'TracksAroundController@store');
+    Route::get('artists', 'ArtistsAroundController@index');
+    Route::post('artists', 'ArtistsAroundController@store');
 });
