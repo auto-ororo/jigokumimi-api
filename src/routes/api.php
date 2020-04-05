@@ -30,6 +30,10 @@ Route::group([
 ], function ($router) {
     Route::get('tracks', 'TracksAroundController@index');
     Route::post('tracks', 'TracksAroundController@store');
+    Route::get('tracks/history', 'TracksAroundController@history');
+    Route::delete('tracks/history', 'TracksAroundController@deleteHistory');
     Route::get('artists', 'ArtistsAroundController@index');
     Route::post('artists', 'ArtistsAroundController@store');
+    Route::get('artists/history', 'ArtistsAroundController@history');
+    Route::delete('artists/history', 'ArtistsAroundController@deleteHistory');
 });

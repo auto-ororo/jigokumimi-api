@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\TrackCaptureLog;
+use App\Models\TrackAround;
 
-class TrackCaptureLogsTableSeeder extends Seeder
+class TracksAroundTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,12 +13,12 @@ class TrackCaptureLogsTableSeeder extends Seeder
     public function run()
     {
         //一括削除
-        TrackCaptureLog::truncate();
+        TrackAround::truncate();
 
         //特定のデータを追加
-        TrackCaptureLog::create([
+        TrackAround::create([
             'spotify_track_id' => '2uNKRyEbaWCzKAX5c31wwn',
-            'spotify_user_id' => 'ueue55sss2v3568ej83tvsgme',
+            'user_id' => 1,
             'longitude' => '139.8002856',
             'latitude' => '35.6947093',
             'popularity' => 48

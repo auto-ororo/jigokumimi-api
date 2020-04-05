@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\ArtistCaptureLog;
+use App\Models\History;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -17,12 +17,10 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(ArtistCaptureLog::class, function (Faker $faker) {
+$factory->define(History::class, function (Faker $faker) {
     return [
-        'spotify_artist_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
-        'spotify_user_id' => $faker->shuffle('abcdefghijklmnopqrstuvwxyz1'),
+        'user_id' => $faker->numberBetween(0, 100),
         'latitude' => $faker->latitude(),
         'longitude' => $faker->longitude(),
-        'popularity' => $faker->numberBetween(0, 100)
     ];
 });

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTracksTable extends Migration
+class CreateArtistsAroundTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateTracksTable extends Migration
      */
     public function up()
     {
-        Schema::create('track_capture_logs', function (Blueprint $table) {
+        Schema::create('artists_around', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('spotify_track_id');
-            $table->string('spotify_user_id');
+            $table->string('spotify_artist_id');
+            $table->unsignedBigInteger('user_id');
             $table->double('longitude');
             $table->double('latitude');
             $table->integer('popularity');
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.
@@ -32,6 +31,6 @@ class CreateTracksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('track_capture_logs');
+        Schema::dropIfExists('artists_around');
     }
 }
