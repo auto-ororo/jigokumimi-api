@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ArtistsAroundRequest;
 use Illuminate\Http\Request;
-use App\Models\ArtistCaptureLog;
+use App\Models\ArtistAround;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +19,7 @@ class ArtistsAroundController extends Controller
     {
         try {
             // パラメータを元に周囲で聴かれている曲を取得
-            $items = ArtistCaptureLog::excludeUser($request->input('userId'))
+            $items = ArtistAround::excludeUser($request->input('userId'))
                         ->withinDistance(
                             $request->input('latitude'),
                             $request->input('longitude'),
@@ -60,7 +60,7 @@ class ArtistsAroundController extends Controller
             $items = $request->all();
             return DB::transaction(function () use ($items) {
                 foreach ($items as $item) {
-                    ArtistCaptureLog::create($item);
+                    ArtistAround::create($item);
                 }
                 return $this->responseToClient('OK', null, $this->HTTP_OK);
             });

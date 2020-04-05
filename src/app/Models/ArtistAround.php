@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ArtistCaptureLog extends BaseModel
+class ArtistAround extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -15,7 +15,7 @@ class ArtistCaptureLog extends BaseModel
         'spotify_artist_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
     ];
 
-    protected $table = 'artist_capture_logs';
+    protected $table = 'artists_around';
 
     /**
      * アーティストごとの人気度を集計する

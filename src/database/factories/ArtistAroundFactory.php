@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\TrackCaptureLog;
+use App\Models\ArtistAround;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -17,9 +17,9 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(TrackCaptureLog::class, function (Faker $faker) {
+$factory->define(ArtistAround::class, function (Faker $faker) {
     return [
-        'spotify_track_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
+        'spotify_artist_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
         'spotify_user_id' => $faker->shuffle('abcdefghijklmnopqrstuvwxyz1'),
         'latitude' => $faker->latitude(),
         'longitude' => $faker->longitude(),

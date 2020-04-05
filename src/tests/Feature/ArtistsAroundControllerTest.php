@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\ArtistCaptureLog;
+use App\Models\ArtistAround;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -26,7 +26,7 @@ class ArtistsAroundControllerTest extends TestCase
     public function 登録した周辺アーティスト情報の人気度を取得できること()
     {
         // 周辺アーティスト情報を登録
-        $artist = factory(ArtistCaptureLog::class)->create();
+        $artist = factory(ArtistAround::class)->create();
 
         $latitude = $artist['latitude'];
         $longitude = $artist['longitude'];
@@ -64,7 +64,7 @@ class ArtistsAroundControllerTest extends TestCase
 
         // 周辺アーティスト情報を30件登録
         for ($i=0; $i < 30; $i++) {
-            factory(ArtistCaptureLog::class)->create([
+            factory(ArtistAround::class)->create([
                 'latitude' =>  $latitudeOfSkyTree,
                 'longitude' => $longitudeOfSkyTree
             ]);
@@ -120,7 +120,7 @@ class ArtistsAroundControllerTest extends TestCase
             'message' => 'OK'
         ]);
 
-        $artists = ArtistCaptureLog::orderBy('id', 'asc')->get();
+        $artists = ArtistAround::orderBy('id', 'asc')->get();
 
         // データが2件登録されていることを確認
         $this->assertEquals(2, count($artists));
@@ -162,7 +162,7 @@ class ArtistsAroundControllerTest extends TestCase
         $response->assertStatus(400);
 
         // データが登録されていないことを確認
-        $artist = ArtistCaptureLog::all();
+        $artist = ArtistAround::all();
         $this->assertEquals(0, count($artist));
     }
 }

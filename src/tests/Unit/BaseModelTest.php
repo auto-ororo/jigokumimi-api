@@ -5,12 +5,12 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use App\Models\TrackCaptureLog;
+use App\Models\TrackAround;
 use App\Models\User;
 
 /**
- * BaseModelを継承したTrackCaptureLogクラスを用いて
- * BaseModel実装の各種メソッドのテストを行う 
+ * BaseModelを継承したTrackAroundクラスを用いて
+ * BaseModel実装の各種メソッドのテストを行う
  */
 class BaseModelTest extends TestCase
 {
@@ -32,7 +32,7 @@ class BaseModelTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $track = factory(TrackCaptureLog::class)->create([
+        $track = factory(TrackAround::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
@@ -41,7 +41,7 @@ class BaseModelTest extends TestCase
         $latitudeOfOshiageStation = 35.710332;
         $longitudeOfOshiageStation = 139.813297;
         $distance = 500;
-        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfOshiageStation, $longitudeOfOshiageStation, $distance)->first();
+        $withInTrack = TrackAround::withinDistance($latitudeOfOshiageStation, $longitudeOfOshiageStation, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
         $this->assertEquals($track['id'], $withInTrack['id']);
@@ -56,7 +56,7 @@ class BaseModelTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $track = factory(TrackCaptureLog::class)->create([
+        $track = factory(TrackAround::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
@@ -65,7 +65,7 @@ class BaseModelTest extends TestCase
         $latitudeOfTokyoTower = 35.658580;
         $longitudeOfTokyoTower = 139.745433;
         $distance = 500;
-        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfTokyoTower, $longitudeOfTokyoTower, $distance)->first();
+        $withInTrack = TrackAround::withinDistance($latitudeOfTokyoTower, $longitudeOfTokyoTower, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
         $this->assertNull($withInTrack);
@@ -80,14 +80,14 @@ class BaseModelTest extends TestCase
         // 位置情報を東京スカイツリーに設定した周辺曲情報を登録
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $track = factory(TrackCaptureLog::class)->create([
+        $track = factory(TrackAround::class)->create([
             'latitude' => $latitudeOfSkyTree,
             'longitude' => $longitudeOfSkyTree
         ]);
 
         // 基準となる位置情報をスカイツリーに設定し､半径500m以内の周辺曲情報を検索
         $distance = 500;
-        $withInTrack = TrackCaptureLog::withinDistance($latitudeOfSkyTree, $longitudeOfSkyTree, $distance)->first();
+        $withInTrack = TrackAround::withinDistance($latitudeOfSkyTree, $longitudeOfSkyTree, $distance)->first();
 
         // スカイツリーの周辺曲情報が取得できていることを確認
         $this->assertEquals($track['id'], $withInTrack['id']);
@@ -100,16 +100,16 @@ class BaseModelTest extends TestCase
     {
         $targetspotifyuserid = 'asdffdsa';
 
-        factory(TrackCaptureLog::class)->create([
+        factory(TrackAround::class)->create([
             'spotify_user_id' => $targetspotifyuserid
         ]);
 
         $includespotifyuserid = '12345678';
 
-        $targettrack = factory(TrackCaptureLog::class)->create([
+        $targettrack = factory(TrackAround::class)->create([
             'spotify_user_id' => $includespotifyuserid
         ]);
-        $withintracks = trackcapturelog::excludeuser($targetspotifyuserid)->get();
+        $withintracks = TrackAround::excludeuser($targetspotifyuserid)->get();
 
         $this->assertequals(1, count($withintracks));
 

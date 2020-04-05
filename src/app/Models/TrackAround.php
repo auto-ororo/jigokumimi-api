@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class TrackCaptureLog extends BaseModel
+class TrackAround extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -13,7 +13,7 @@ class TrackCaptureLog extends BaseModel
         'spotify_track_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
     ];
 
-    protected $table = 'track_capture_logs';
+    protected $table = 'tracks_around';
 
     /**
      * 曲ごとの人気度を集計する

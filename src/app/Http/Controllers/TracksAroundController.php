@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TracksAroundRequest;
 use Illuminate\Http\Request;
-use App\Models\TrackCaptureLog;
+use App\Models\TrackAround;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +19,7 @@ class TracksAroundController extends Controller
     {
         try {
             // パラメータを元に周囲で聴かれている曲を取得
-            $items = TrackCaptureLog::excludeUser($request->input('userId'))
+            $items = TrackAround::excludeUser($request->input('userId'))
                         ->withinDistance(
                             $request->input('latitude'),
                             $request->input('longitude'),
@@ -60,7 +60,7 @@ class TracksAroundController extends Controller
             $items = $request->all();
             return DB::transaction(function () use ($items) {
                 foreach ($items as $item) {
-                    TrackCaptureLog::create($item);
+                    TrackAround::create($item);
                 }
                 return $this->responseToClient('OK', null, $this->HTTP_OK);
             });

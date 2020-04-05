@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\TrackCaptureLog;
+use App\Models\TrackAround;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -26,7 +26,7 @@ class TracksAroundControllerTest extends TestCase
     public function 登録した周辺曲情報の人気度を取得できること()
     {
         // 周辺曲情報を登録
-        $track = factory(TrackCaptureLog::class)->create();
+        $track = factory(TrackAround::class)->create();
 
         $latitude = $track['latitude'];
         $longitude = $track['longitude'];
@@ -64,7 +64,7 @@ class TracksAroundControllerTest extends TestCase
 
         // 周辺曲情報を30件登録
         for ($i=0; $i < 30; $i++) {
-            factory(TrackCaptureLog::class)->create([
+            factory(TrackAround::class)->create([
                 'latitude' =>  $latitudeOfSkyTree,
                 'longitude' => $longitudeOfSkyTree
             ]);
@@ -120,7 +120,7 @@ class TracksAroundControllerTest extends TestCase
             'message' => 'OK'
         ]);
 
-        $tracks = TrackCaptureLog::orderBy('id', 'asc')->get();
+        $tracks = TrackAround::orderBy('id', 'asc')->get();
 
         // データが2件登録されていることを確認
         $this->assertEquals(2, count($tracks));
@@ -162,7 +162,7 @@ class TracksAroundControllerTest extends TestCase
         $response->assertStatus(400);
 
         // データが登録されていないことを確認
-        $track = TrackCaptureLog::all();
+        $track = TrackAround::all();
         $this->assertEquals(0, count($track));
     }
 }
