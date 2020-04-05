@@ -11,12 +11,12 @@ class BaseModel extends Model
      * 指定ユーザーを除外する
      *
      * @param [type] $query
-     * @param [type] $spotify_user_id
+     * @param [type] $user_id
      * @return void
      */
-    public function scopeExcludeUser($query, $spotify_user_id)
+    public function scopeExcludeUser($query, $user_id)
     {
-        return $query->where('spotify_user_id', '<>', $spotify_user_id);
+        return $query->where('user_id', '<>', $user_id);
     }
 
     /**

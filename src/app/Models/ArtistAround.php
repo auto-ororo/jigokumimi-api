@@ -12,7 +12,7 @@ class ArtistAround extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'spotify_artist_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
+        'spotify_artist_id', 'user_id', 'longitude','latitude', 'popularity'
     ];
 
     protected $table = 'artists_around';

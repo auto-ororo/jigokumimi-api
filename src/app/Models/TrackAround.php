@@ -10,7 +10,7 @@ class TrackAround extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'spotify_track_id', 'spotify_user_id', 'longitude','latitude', 'popularity'
+        'spotify_track_id', 'user_id', 'longitude','latitude', 'popularity'
     ];
 
     protected $table = 'tracks_around';

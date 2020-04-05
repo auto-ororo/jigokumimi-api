@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArtistsAroundTable extends Migration
+class CreateHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateArtistsAroundTable extends Migration
      */
     public function up()
     {
-        Schema::create('artists_around', function (Blueprint $table) {
+        Schema::create('histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('spotify_artist_id');
             $table->unsignedBigInteger('user_id');
-            $table->double('longitude');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->double('latitude');
-            $table->integer('popularity');
+            $table->double('longitude');
+            $table->double('distance');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateArtistsAroundTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('artists_around');
+        Schema::dropIfExists('histories');
     }
 }

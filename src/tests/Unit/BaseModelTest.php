@@ -101,13 +101,13 @@ class BaseModelTest extends TestCase
         $targetspotifyuserid = 'asdffdsa';
 
         factory(TrackAround::class)->create([
-            'spotify_user_id' => $targetspotifyuserid
+            'user_id' => $targetspotifyuserid
         ]);
 
         $includespotifyuserid = '12345678';
 
         $targettrack = factory(TrackAround::class)->create([
-            'spotify_user_id' => $includespotifyuserid
+            'user_id' => $includespotifyuserid
         ]);
         $withintracks = TrackAround::excludeuser($targetspotifyuserid)->get();
 

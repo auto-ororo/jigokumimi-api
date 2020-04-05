@@ -2,7 +2,8 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\ArtistAround;
+use App\Models\TrackAroundHistory;
+use App\Models\History;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -17,12 +18,13 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(ArtistAround::class, function (Faker $faker) {
+$factory->define(TrackAroundHistory::class, function (Faker $faker) {
     return [
-        'spotify_artist_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
-        'user_id' => $faker->numberBetween(0, 100),
-        'latitude' => $faker->latitude(),
-        'longitude' => $faker->longitude(),
-        'popularity' => $faker->numberBetween(0, 100)
+        'history_id' => function() {
+            return factory(History::class)->create()->id;
+        },
+        'spotify_track_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
+        'rank' => $faker->numberBetween(0, 100),
+        'popularity' => $faker->numberBetween(0, 100),
     ];
 });

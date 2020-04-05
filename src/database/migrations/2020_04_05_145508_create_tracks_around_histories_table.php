@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArtistsAroundTable extends Migration
+class CreateTracksAroundHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateArtistsAroundTable extends Migration
      */
     public function up()
     {
-        Schema::create('artists_around', function (Blueprint $table) {
+        Schema::create('tracks_around_histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('spotify_artist_id');
-            $table->unsignedBigInteger('user_id');
-            $table->double('longitude');
-            $table->double('latitude');
+            $table->unsignedBigInteger('history_id');
+            $table->integer('rank');
+            $table->string('spotify_track_id');
             $table->integer('popularity');
             $table->timestamps();
+            $table->foreign('history_id')->references('id')->on('histories')->onDelete('cascade');
         });
     }
 
@@ -31,6 +31,6 @@ class CreateArtistsAroundTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('artists_around');
+        Schema::dropIfExists('tracks_around_histories');
     }
 }

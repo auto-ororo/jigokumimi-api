@@ -20,7 +20,7 @@ use Illuminate\Support\Str;
 $factory->define(TrackAround::class, function (Faker $faker) {
     return [
         'spotify_track_id' => $faker->shuffle('abcdefghijklmnopqrstuvwx'),
-        'spotify_user_id' => $faker->shuffle('abcdefghijklmnopqrstuvwxyz1'),
+        'user_id' => $faker->numberBetween(0, 100),
         'latitude' => $faker->latitude(),
         'longitude' => $faker->longitude(),
         'popularity' => $faker->numberBetween(0, 100)

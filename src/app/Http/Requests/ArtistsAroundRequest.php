@@ -27,7 +27,7 @@ class ArtistsAroundRequest extends FormRequest
     {
         return [
             '*.spotify_artist_id' => 'required',
-            '*.spotify_user_id' => 'required',
+            '*.user_id' => 'required',
             '*.longitude'    => 'required',
             '*.latitude' => 'required',
             '*.popularity' => 'required'

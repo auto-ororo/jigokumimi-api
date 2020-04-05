@@ -27,7 +27,7 @@ class TracksAroundRequest extends FormRequest
     {
         return [
             '*.spotify_track_id' => 'required',
-            '*.spotify_user_id' => 'required',
+            '*.user_id' => 'required',
             '*.longitude'    => 'required',
             '*.latitude' => 'required',
             '*.popularity' => 'required'
