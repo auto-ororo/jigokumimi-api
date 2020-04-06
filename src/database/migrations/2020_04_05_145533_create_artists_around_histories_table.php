@@ -15,7 +15,7 @@ class CreateArtistsAroundHistoriesTable extends Migration
     {
         Schema::create('artists_around_histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('history_id');
+            $table->uuid('history_id');
             $table->integer('rank');
             $table->string('spotify_artist_id');
             $table->integer('popularity');

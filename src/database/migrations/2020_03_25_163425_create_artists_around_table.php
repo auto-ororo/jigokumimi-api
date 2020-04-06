@@ -16,7 +16,7 @@ class CreateArtistsAroundTable extends Migration
         Schema::create('artists_around', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('spotify_artist_id');
-            $table->unsignedBigInteger('user_id');
+            $table->uuid('user_id');
             $table->double('longitude');
             $table->double('latitude');
             $table->integer('popularity');

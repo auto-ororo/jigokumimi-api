@@ -81,25 +81,24 @@ class ArtistsAroundControllerTest extends TestCase
     {
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $excludeUserId = 2;
         $distance = 1000;
 
-        factory(User::class)->create([
-            'id' => 1
-        ]);
+        // 検索条件に該当するユーザーを生成
+        $dummuUser = factory(User::class)->create();
 
         // 周辺アーティスト情報を30件登録
         for ($i=0; $i < 30; $i++) {
             factory(ArtistAround::class)->create([
-                'user_id' => 1 ,
+                'user_id' => $dummuUser['id'] ,
                 'latitude' =>  $latitudeOfSkyTree,
                 'longitude' => $longitudeOfSkyTree
             ]);
         }
 
-        $user = factory(User::class)->create([
-            'id' => $excludeUserId
-        ]);
+        // ログインユーザーを生成
+        $user = factory(User::class)->create();
+        $excludeUserId = $user['id'];
+
         $this->actingAs($user);
 
         $headers = [
