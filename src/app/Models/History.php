@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Webpatser\Uuid\Uuid;
 
 class History extends Model
 {
@@ -24,6 +25,34 @@ class History extends Model
     ];
 
     protected $table = 'histories';
+
+    /**
+     * ID連番を無効
+     *
+     * @var boolean
+     */
+    public $incrementing = false;
+
+    /**
+     * 主キーを文字列に変更
+     *
+     * @var boolean
+     */
+    protected $keyType = 'string';
+
+    /**
+     * モデル作成時にUUIDを生成
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::generate()->string;
+        });
+    }
 
     public function artistsAroundHistories()
     {

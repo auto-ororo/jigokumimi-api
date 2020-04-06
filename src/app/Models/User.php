@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Webpatser\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -37,6 +38,34 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * ID連番を無効
+     *
+     * @var boolean
+     */
+    public $incrementing = false;
+
+    /**
+     * 主キーを文字列に変更
+     *
+     * @var boolean
+     */
+    protected $keyType = 'string';
+
+    /**
+     * モデル作成時にUUIDを生成
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::generate()->string;
+        });
+    }
 
     public function getJWTIdentifier()
     {

@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder
 
         //特定のデータを追加
         User::create([
+            'id' => '12345678901234567890123456789012',
             'name' => 'test1',
             'email' => 'test@test.com',
             'password' => Hash::make('testtest')

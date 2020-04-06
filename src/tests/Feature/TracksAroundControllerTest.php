@@ -27,23 +27,24 @@ class TracksAroundControllerTest extends TestCase
      */
     public function 登録した周辺曲情報の人気度を取得でき､取得情報が検索履歴に登録されていること()
     {
+        // 検索条件に該当するユーザーを生成
+        $dummuUser = factory(User::class)->create();
+
         // 周辺曲情報を登録
         $track = factory(TrackAround::class)->create([
-            'id' => 1
+            'user_id' => $dummuUser['id']
         ]);
 
         $latitude = $track['latitude'];
         $longitude = $track['longitude'];
-        $excludeUserId = 2;
         $distance = 1000;
 
-        $user = factory(User::class)->create([
-            'id' => $excludeUserId
-        ]);
+        $user = factory(User::class)->create();
         $this->actingAs($user);
+        $excludeUserId = $user['id'];
 
         $headers = [
-            'Accept' => 'application/json' ,
+            'Accept' => 'application/json',
         ];
 
         // 登録した曲以外の曲IDを指定して周辺曲情報を取得
@@ -74,24 +75,25 @@ class TracksAroundControllerTest extends TestCase
      */
     public function 周辺曲情報の最大取得件数が25件以下であること()
     {
+        // 検索条件に該当するユーザーを生成
+        $dummuUser = factory(User::class)->create();
+
+        $user = factory(User::class)->create();
+        $excludeUserId = $user['id'];
+        $this->actingAs($user);
+
         $latitudeOfSkyTree = 35.709544;
         $longitudeOfSkyTree = 139.809049;
-        $excludeUserId = 2;
         $distance = 1000;
 
         // 周辺曲情報を30件登録
         for ($i=0; $i < 30; $i++) {
             factory(TrackAround::class)->create([
-                'user_id' => 1,
+                'user_id' => $dummuUser['id'],
                 'latitude' =>  $latitudeOfSkyTree,
                 'longitude' => $longitudeOfSkyTree
             ]);
         }
-
-        $user = factory(User::class)->create([
-            'id' => $excludeUserId
-        ]);
-        $this->actingAs($user);
 
         $headers = [
             'Accept' => 'application/json' ,

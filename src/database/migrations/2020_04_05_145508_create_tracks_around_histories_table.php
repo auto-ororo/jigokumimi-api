@@ -15,7 +15,7 @@ class CreateTracksAroundHistoriesTable extends Migration
     {
         Schema::create('tracks_around_histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('history_id');
+            $table->uuid('history_id');
             $table->integer('rank');
             $table->string('spotify_track_id');
             $table->integer('popularity');

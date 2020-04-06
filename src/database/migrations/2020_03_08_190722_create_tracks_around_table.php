@@ -16,7 +16,7 @@ class CreateTracksAroundTable extends Migration
         Schema::create('tracks_around', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('spotify_track_id');
-            $table->unsignedBigInteger('user_id');
+            $table->uuid('user_id');
             $table->double('longitude');
             $table->double('latitude');
             $table->integer('popularity');

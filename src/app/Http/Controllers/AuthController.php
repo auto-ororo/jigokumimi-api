@@ -58,8 +58,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $tmp = auth('api');
-        $udata = $tmp->user();
+        $udata = auth('api')->user();
 
         return $this->responseToClient('OK', $udata, 200);
     }
@@ -97,6 +96,7 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         $data = [
+            'id' => auth('api')->user()->id,
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
