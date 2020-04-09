@@ -59,7 +59,6 @@ class ArtistsAroundController extends Controller
                     $responseItem['spotify_artist_id'] = $item['spotify_artist_id'];
                     $responseItem['popularity'] = (int)$item['popularity'];
                     $responseItems[] = $responseItem;
-                    $rankIndex++;
 
                     $historyItem = [];
                     $historyItem['history_id'] = $historyId;
@@ -68,6 +67,8 @@ class ArtistsAroundController extends Controller
                     $historyItem['popularity'] = (int)$item['popularity'];
                     // ArtistAeoundHistory登録
                     ArtistAroundHistory::create($historyItem);
+
+                    $rankIndex++;
                 }
 
 
@@ -110,9 +111,15 @@ class ArtistsAroundController extends Controller
         try {
             $userId = $request->input('userId');
 
+            // ArtistAroundHistoryを子データとして持つHistoryデータのみを取得
             $histories = History::where('user_id', $userId)
-                ->orderBy('created_at', 'desc')
-                ->get();
+                ->with('artistsAroundHistories')
+                ->whereHas('artistsAroundHistories', function ($query) {
+                    $query->whereExists(function ($query) {
+                        return $query;
+                    });
+                })
+                ->orderBy('created_at', 'desc')->get();
 
             foreach ($histories as $history) {
                 $history->artistsAroundHistories;

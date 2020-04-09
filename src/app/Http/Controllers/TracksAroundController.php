@@ -59,7 +59,6 @@ class TracksAroundController extends Controller
                     $responseItem['spotify_track_id'] = $item['spotify_track_id'];
                     $responseItem['popularity'] = (int)$item['popularity'];
                     $responseItems[] = $responseItem;
-                    $rankIndex++;
 
                     $historyItem = [];
                     $historyItem['history_id'] = $historyId;
@@ -68,8 +67,9 @@ class TracksAroundController extends Controller
                     $historyItem['popularity'] = (int)$item['popularity'];
                     // TrackAeoundHistory登録
                     TrackAroundHistory::create($historyItem);
-                }
 
+                    $rankIndex++;
+                }
                 return $this->responseToClient('OK', $responseItems, $this->HTTP_OK);
             });
         } catch (Exception $e) {
@@ -109,9 +109,15 @@ class TracksAroundController extends Controller
         try {
             $userId = $request->input('userId');
 
+            // TrackAroundHistoryを子データとして持つHistoryデータのみを取得
             $histories = History::where('user_id', $userId)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            ->with('tracksAroundHistories')
+            ->whereHas('tracksAroundHistories', function ($query) {
+                $query->whereExists(function ($query) {
+                    return $query;
+                });
+            })
+            ->orderBy('created_at', 'desc')->get();
 
             foreach ($histories as $history) {
                 $history->tracksAroundHistories;

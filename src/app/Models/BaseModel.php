@@ -34,8 +34,7 @@ class BaseModel extends Model
         $equatorRadius = 6378137.0;
 
         // 全カラム(*)､及び引数で渡された位置情報との距離(distance)を取得するSELECT文
-        $selectStr =<<<___SELECT_SQL___
-        *,
+        $calcDistanceStr =<<<___CALC___
         (? * acos(
             cos(radians(?))
                 *
@@ -46,10 +45,20 @@ class BaseModel extends Model
             sin(radians(?))
                 *
             sin(radians(latitude)))
-        ) AS distance
+        )
+        ___CALC___;
+
+        $selectStr =<<<___SELECT_SQL___
+        *,
+        $calcDistanceStr
         ___SELECT_SQL___;
 
+        $whereStr =<<<___WHERE_SQL___
+        $calcDistanceStr <= ?
+        ___WHERE_SQL___;
+
+
         return $query->selectRaw($selectStr, [$equatorRadius, $latitude, $longitude, $latitude])
-                     ->having('distance', '<=', $distance);
+                     ->whereRaw($whereStr, [$equatorRadius, $latitude, $longitude, $latitude, $distance]);
     }
 }
