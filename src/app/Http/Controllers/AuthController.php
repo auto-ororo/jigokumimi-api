@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Exception;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -33,6 +36,36 @@ class AuthController extends Controller
         $user->save();
 
         return $this->responseToClient('OK', $user, 200);
+    }
+
+    /**
+     * パスワード変更
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        if (!Hash::check($request['current_password'], auth('api')->user()->password)) {
+            return $this->responseToClient('現在のパスワードが異なります', null, 400);
+        }
+        $user = auth('api')->user();
+        $user['password'] = bcrypt($request['new_password']);
+        $user->save();
+        return $this->responseToClient('OK', null, 200);
+    }
+
+    /**
+     * ユーザー削除
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy()
+    {
+        // 認証ユーザーからIDを取得し削除
+        $userId = auth('api')->user()->id;
+        User::destroy($userId);
+
+        return $this->responseToClient('OK', null, 200);
     }
 
     /**
