@@ -19,6 +19,8 @@ Route::group([
 
 ], function ($router) {
     Route::post('create', 'AuthController@create');
+    Route::put('changePassword', 'AuthController@changePassword');
+    Route::delete('delete', 'AuthController@destroy');
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');

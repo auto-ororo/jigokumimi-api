@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -31,8 +32,8 @@ class AuthControllerTest extends TestCase
         $inputPasswordRetype = '12345678';
 
 
-        $data = [ # 登録するユーザー情報 
-            'name' =>  $inputName,       
+        $data = [ # 登録するユーザー情報
+            'name' =>  $inputName,
             'email' => $inputEmail,
             'password' => $inputPassword,
             'password_confirmation' => $inputPasswordRetype
@@ -40,11 +41,11 @@ class AuthControllerTest extends TestCase
 
         // 新規登録
         $response = $this->post('api/auth/create', $data);
-        
+
         // 新規登録成功
         $response->assertOk()->assertJson([
             'data' => [
-                'name' =>  $inputName,       
+                'name' =>  $inputName,
                 'email' => $inputEmail
             ]
         ]);
@@ -56,7 +57,7 @@ class AuthControllerTest extends TestCase
 
         // ログイン
         $response = $this->post('api/auth/login', $loginData);
-        
+
         // ログイン成功
         $response->assertOk();
 
@@ -64,6 +65,94 @@ class AuthControllerTest extends TestCase
         $dbUser = User::all()[0];
         $this->assertEquals($dbUser['name'], $inputName);
         $this->assertEquals($dbUser['email'], $inputEmail);
+    }
+
+    /**
+     * @test
+     */
+    public function ユーザーのパスワード変更ができること()
+    {
+        $currentPassword = 'test1111';
+
+        // DBに保存された User モデルが返る
+        $user = factory(User::class)->create([
+            'password'  => bcrypt($currentPassword)
+        ]);
+
+        $newPassword = '12345678';
+        $newPasswordRetype = '12345678';
+
+        $data = [ # 更新するユーザー情報
+            'current_password'=> $currentPassword,
+            'new_password' => $newPassword,
+            'new_password_confirmation' => $newPasswordRetype
+        ];
+
+        $this->actingAs($user);
+
+        // パスワード変更
+        $response = $this->put('api/auth/changePassword', $data);
+
+        // 通信成功
+        $response->assertOk();
+
+        // 新しいパスワードがハッシュ化されてDBに登録されていることを確認
+        $afterUser = User::find($user['id']);
+        $this->assertTrue(Hash::check($newPassword, $afterUser['password']));
+    }
+
+    /**
+     * @test
+     */
+    public function 現在のパスワードが異なる時､パスワード変更時に405エラーになること()
+    {
+        $currentPassword = 'test1111';
+
+        // DBに保存された User モデルが返る
+        $user = factory(User::class)->create([
+            'password'  => bcrypt($currentPassword)
+        ]);
+
+        $wrongPassword = 'wrongtest1111';
+        $newPassword = '12345678';
+        $newPasswordRetype = '12345678';
+
+        $data = [ # 更新するユーザー情報(現在のパスワードに異なる値を設定)
+            'current_password'=> $wrongPassword,
+            'new_password' => $newPassword,
+            'new_password_confirmation' => $newPasswordRetype
+        ];
+
+        $this->actingAs($user);
+
+        // パスワード変更
+        $response = $this->put('api/auth/changePassword', $data);
+
+        // ステータスが405となり､エラーメッセージが返却されること
+        $response->assertStatus(400)->assertJson([
+            'message' => '現在のパスワードが異なります'
+        ]);
+    }
+
+
+    /**
+     * @test
+     */
+    public function ユーザー削除ができること()
+    {
+        // DBに保存された User モデルが返る
+        $user = factory(User::class)->create([
+        ]);
+
+        $this->actingAs($user);
+
+        // パスワード変更
+        $response = $this->delete('api/auth/delete');
+
+        // リクエストが成功しDBからユーザーが削除されていること
+        $response->assertOk();
+        $afterUser = User::find($user['id']);
+        $this->assertNull($afterUser);
     }
 
     /**
@@ -85,7 +174,7 @@ class AuthControllerTest extends TestCase
 
         // ログイン
         $response = $this->post('api/auth/login', $data);
-        
+
         // ログイン成功
         $response->assertOk();
 
@@ -188,22 +277,22 @@ class AuthControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        
+
         $beforeRefreshToken = JWTAuth::fromUser($user);
-                
+
         $headers = ['Accept' => 'application/json', 'Authorization' => 'Bearer ' . $beforeRefreshToken];
 
         $response = $this->post('/api/auth/refresh', [], $headers);
 
         // リフレッシュ成功
         $response->assertOk()->assertJson([
-           'data' => [ 
+           'data' => [
                'access_token' => true
             ]
         ]);
 
         $afterRefreshToken = $response['data']['access_token'];
-    
+
         // レスポンスのトークンがリフレッシュ前のトークンと異なることを確認
         $this->assertNotEquals($beforeRefreshToken, $afterRefreshToken);
     }
