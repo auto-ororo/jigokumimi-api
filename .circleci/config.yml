@@ -6,7 +6,6 @@ jobs:
       - image: circleci/mariadb:10.4-ram
         envirionment: # MariaDBの初期設定
           - APP_DEBUG: true
-          - TZ: Asia/Tokyo
           - APP_ENV: circle
           - DB_CONNECTION: circle_test
           - MYSQL_ALLOW_EMPTY_PASSWORD: true
