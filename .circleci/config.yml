@@ -127,9 +127,9 @@ jobs:
           command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-app-migrate
 workflows:
   version: 2
-    test:
-      jobs:
-        - build
-        - build_image:
-            requires:
-              - build
+  test:
+    jobs:
+      - build
+      - build_image:
+          requires:
+            - build
