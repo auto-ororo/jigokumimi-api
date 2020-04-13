@@ -10,6 +10,8 @@ ARG PHP_MANUAL_URL=http://psysh.org/manual/ja/php_manual.sqlite
 
 # timezone
 ARG TZ
+ARG APP_KEY
+ARG JWT_SECRET
 
 # composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -41,6 +43,8 @@ RUN apk update && \
   composer config -g repos.packagist composer https://packagist.jp && \
   composer global require hirak/prestissimo
 
+ENV APP_KEY ${APP_KEY}
+ENV JWT_SECRET ${JWT_SECRET}
 
 ENV APP_ROOT /app
 RUN mkdir $APP_ROOT
