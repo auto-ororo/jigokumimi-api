@@ -76,7 +76,7 @@ jobs:
 
       - run:
           name: build app container # PHPコンテナをビルド
-          command: docker build -t ${ECR_APP_DOMAIN}:$CIRCLE_SHA1 -t ${ECR_APP_DOMAIN}:latest --build-arg TZ=${TZ} --build-arg APP_KEY=${APP_KEY}  ---build-arg JWT_SECRET=${JWT_SECRET} f ./docker/php/Dockerfile_production .
+          command: docker build -t ${ECR_APP_DOMAIN}:$CIRCLE_SHA1 -t ${ECR_APP_DOMAIN}:latest --build-arg TZ=${TZ} --build-arg APP_KEY=${APP_KEY}  --build-arg JWT_SECRET=${JWT_SECRET} -f ./docker/php/Dockerfile_production .
 
       - run:
           name: build nginx container # Nginxコンテナをビルド
