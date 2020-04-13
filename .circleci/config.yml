@@ -52,7 +52,3 @@ jobs:
           name: test_run
           command: ./vendor/bin/phpunit --testdox
           working_directory: ~/repo/src
-workflows:
-  test:
-    jobs:
-      - build
