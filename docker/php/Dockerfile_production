@@ -46,8 +46,8 @@ RUN apk update && \
 ENV APP_KEY ${APP_KEY}
 ENV JWT_SECRET ${JWT_SECRET}
 
-ENV APP_ROOT /app
-RUN mkdir $APP_ROOT
+ENV APP_ROOT /work/src
+RUN mkdir -p $APP_ROOT
 
 # ソースコードコピー
 ADD ./src $APP_ROOT
