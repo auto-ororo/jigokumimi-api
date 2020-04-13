@@ -47,6 +47,6 @@ class ArtistAroundTest extends TestCase
         $this->assertequals(2, count($artists));
 
         // 人気度が集計されていることを確認
-        $this->assertequals(15, $artists[0]['popularity']);
+        $this->assertequals(150, $artists[0]['popularity']);
     }
 }
