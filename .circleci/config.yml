@@ -6,6 +6,7 @@ jobs:
       - image: circleci/mariadb:10.4-ram
         envirionment: # MariaDBの初期設定
           - APP_DEBUG: true
+          - TZ: Asia/Tokyo
           - APP_ENV: circle
           - DB_CONNECTION: circle_test
           - MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -20,7 +21,7 @@ jobs:
 
       - restore_cache: # composer.jsonのキャッシュがあれば利用
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
+          - v1-dependencies-{{ checksum "./src/composer.json" }}
           - v1-dependencies-
 
       - run:
@@ -31,7 +32,7 @@ jobs:
       - save_cache: # composer.jsonをキャッシュ
           paths:
             - ./src/vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies-{{ checksum "./src/composer.json" }}
           working_directory: ~/repo/src
 
       - run:
