@@ -2,7 +2,8 @@ version: "3"
 services:
   app:
     build:
-      context: ./docker/php
+      context: .
+      dockerfile: ./docker/php/Dockerfile_development
       args:
         - TZ=${TZ:-Asia/Tokyo}
     ports:

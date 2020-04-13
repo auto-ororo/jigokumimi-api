@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  build: # テストを行うworkflow
+    docker:
+      - image: circleci/php:7.4-fpm
+      - image: circleci/mariadb:10.4-ram
+        envirionment: # MariaDBの初期設定
+          - APP_DEBUG: true
+          - APP_ENV: circle
+          - DB_CONNECTION: circle_test
+          - MYSQL_ALLOW_EMPTY_PASSWORD: true
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: test_setup # テストを行うために必要なライブラリなどのインストール
+          command: |
+            sudo apt-get update && sudo apt-get install -y libpng-dev libjpeg-dev |
+            sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include |
+            sudo docker-php-ext-install pdo_mysql gd
+
+      - restore_cache: # composer.jsonのキャッシュがあれば利用
+          keys:
+          - v1-dependencies-{{ checksum "composer.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: composer install
+          command: composer install -n --prefer-dist
+          working_directory: ~/repo/src
+
+      - save_cache: # composer.jsonをキャッシュ
+          paths:
+            - ./src/vendor
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          working_directory: ~/repo/src
+
+      - run:
+          name: migration
+          command: php artisan migrate --env=circle
+          working_directory: ~/repo/src
+
+      - run: # envファイルをcircleci用のものに変更
+          name: env_copy
+          command: rm .env.testing && ln -s .env.circle .env.testing
+          working_directory: ~/repo/src
+
+      - run:
+          name: test_run
+          command: ./vendor/bin/phpunit --testdox
+          working_directory: ~/repo/src
+workflows:
+  test:
+    jobs:
+      - build
