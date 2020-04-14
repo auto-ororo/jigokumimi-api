@@ -122,7 +122,7 @@ jobs:
 
       - run:
           name: migration # マイグレーションタスクを実行
-          command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-migration-task
+          command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-migration
 workflows:
   version: 2
   test:
