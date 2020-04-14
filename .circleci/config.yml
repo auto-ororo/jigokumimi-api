@@ -117,12 +117,12 @@ jobs:
           name: deploy # 新しいタスク定義ファイルを作成し、ECSに反映させる
           command: |
             aws ecs describe-task-definition --task-definition jigokumimi-service | jq '.taskDefinition | { containerDefinitions: .containerDefinitions }' > task_definition.json
-            aws ecs register-task-definition --family jigokumimi-service --cli-input-json file://task_definition.json
+            aws ecs register-task-definition --execution-role-arn arn:aws:iam::627172781845:role/ecs-task-role --family jigokumimi-service --cli-input-json file://task_definition.json
             aws ecs update-service --cluster jigokumimi-ecs-cluster --service jigokumimi-service --task-definition jigokumimi-service
 
       - run:
           name: migration # マイグレーションタスクを実行
-          command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-app-migrate
+          command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-migration-task
 workflows:
   version: 2
   test:
