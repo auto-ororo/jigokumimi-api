@@ -45,7 +45,7 @@ Visual Studio Codeの拡張機能「Remote Container」を用いて、Dockerコ�
 
 3. クローンしたリポジトリをVisual Studio Codeで開く
 
-4. Visual Studio Codeのコマンドパレット(Cmd/Ctrl + P)より下記を入力してDockerコンテナ起動
+4. Visual Studio Codeのコマンドパレット(Cmd/Ctrl + P)より下記を入力してDockerコンテナ起動する
 
     ```bash
     Remote rebuild and Reopen in Container...
