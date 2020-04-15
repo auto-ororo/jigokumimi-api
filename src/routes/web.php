@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// 疎通確認
+Route::get('/healthCheck', 'HealthCheckController@index');

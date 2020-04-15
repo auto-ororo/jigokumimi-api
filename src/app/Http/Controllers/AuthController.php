@@ -30,12 +30,16 @@ class AuthController extends Controller
      */
     public function create(AuthRequest $request)
     {
-        $user = new User;
-        $user->fill($request->all());
-        $user->password = bcrypt($request->password);
-        $user->save();
+        try {
+            $user = new User;
+            $user->fill($request->all());
+            $user->password = bcrypt($request->password);
+            $user->save();
 
-        return $this->responseToClient('OK', $user, 200);
+            return $this->responseToClient('OK', $user, 200);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -45,13 +49,17 @@ class AuthController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request)
     {
-        if (!Hash::check($request['current_password'], auth('api')->user()->password)) {
-            return $this->responseToClient('現在のパスワードが異なります', null, 400);
+        try {
+            if (!Hash::check($request['current_password'], auth('api')->user()->password)) {
+                return $this->responseToClient('現在のパスワードが異なります', null, 400);
+            }
+            $user = auth('api')->user();
+            $user['password'] = bcrypt($request['new_password']);
+            $user->save();
+            return $this->responseToClient('OK', null, 200);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }
-        $user = auth('api')->user();
-        $user['password'] = bcrypt($request['new_password']);
-        $user->save();
-        return $this->responseToClient('OK', null, 200);
     }
 
     /**
@@ -61,11 +69,15 @@ class AuthController extends Controller
      */
     public function destroy()
     {
-        // 認証ユーザーからIDを取得し削除
-        $userId = auth('api')->user()->id;
-        User::destroy($userId);
+        try {
+            // 認証ユーザーからIDを取得し削除
+            $userId = auth('api')->user()->id;
+            User::destroy($userId);
 
-        return $this->responseToClient('OK', null, 200);
+            return $this->responseToClient('OK', null, 200);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -75,13 +87,17 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $credentials = request(['email', 'password']);
+        try {
+            $credentials = request(['email', 'password']);
 
-        if (! $token = auth('api')->attempt($credentials)) {
-            return $this->responseToClient('メールアドレス、またはパスワードが異なります。', null, 401);
+            if (! $token = auth('api')->attempt($credentials)) {
+                return $this->responseToClient('メールアドレス、またはパスワードが異なります。', null, 401);
+            }
+
+            return $this->respondWithToken($token);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e , $this->HTTP_INTERNAL_ERROR);
         }
-
-        return $this->respondWithToken($token);
     }
 
     /**
@@ -91,9 +107,12 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $udata = auth('api')->user();
-
-        return $this->responseToClient('OK', $udata, 200);
+        try {
+            $udata = auth('api')->user();
+            return $this->responseToClient('OK', $udata, 200);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -104,9 +123,12 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth('api')->logout();
-
-        return $this->responseToClient('Successfully logged out', null, 200);
+        try {
+            auth('api')->logout();
+            return $this->responseToClient('Successfully logged out', null, 200);
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -116,7 +138,11 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        try {
+            return $this->respondWithToken(auth('api')->refresh());
+        } catch (Exception $e) {
+            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+        }
     }
 
     /**

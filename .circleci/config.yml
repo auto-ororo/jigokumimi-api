@@ -15,16 +15,12 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: test_setup # テストを行うために必要なライブラリなどのインストール
-          command: |
-            sudo apt-get update && sudo apt-get install -y libpng-dev libjpeg-dev |
-            sudo docker-php-ext-configure gd --with-png-dir=/usr/include --with-jpeg-dir=/usr/include |
-            sudo docker-php-ext-install pdo_mysql gd
+      # PHP関連のライブラリをインストール
+      - run: sudo docker-php-ext-install pdo_mysql
 
       - restore_cache: # composer.jsonのキャッシュがあれば利用
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
+          - v1-dependencies-{{ checksum "./src/composer.json" }}
           - v1-dependencies-
 
       - run:
@@ -35,7 +31,7 @@ jobs:
       - save_cache: # composer.jsonをキャッシュ
           paths:
             - ./src/vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies-{{ checksum "./src/composer.json" }}
           working_directory: ~/repo/src
 
       - run:
@@ -52,7 +48,95 @@ jobs:
           name: test_run
           command: ./vendor/bin/phpunit --testdox
           working_directory: ~/repo/src
+  build_image:
+    docker:
+      - image: circleci/php:7.4-fpm
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout:
+
+      - setup_remote_docker:
+          docker_layer_caching: false
+
+      - run:
+          name: setup Laravel # envをproduction用のものに変更&権限設定
+          command: |
+            ln -s .env.production .env
+            sudo chmod -R 777 storage bootstrap/cache
+          working_directory: ~/repo/src
+
+      - run:
+          name: composer install
+          command: composer install -n --prefer-dist
+          working_directory: ~/repo/src
+
+      - run:
+          name: build app container # PHPコンテナをビルド
+          command: docker build -t ${ECR_APP_DOMAIN}:$CIRCLE_SHA1 -t ${ECR_APP_DOMAIN}:latest --build-arg TZ=${TZ} --build-arg APP_KEY=${APP_KEY}  --build-arg JWT_SECRET=${JWT_SECRET} -f ./docker/php/Dockerfile_production .
+
+      - run:
+          name: build nginx container # Nginxコンテナをビルド
+          command: docker build -t ${ECR_NGINX_DOMAIN}:$CIRCLE_SHA1 -t ${ECR_NGINX_DOMAIN}:latest -f ./docker/nginx/Dockerfile_production .
+
+      - run:
+          name: install aws cli # コマンドラインからAWSを操作するためにaws-cliをインストール
+          command: |
+            curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+            sudo python get-pip.py
+            sudo pip install awscli
+
+      - run:
+          name: push docker images # ECRにコンテナイメージをpush
+          command: |
+            $(aws ecr get-login --no-include-email --region ap-northeast-1)
+            docker push ${ECR_APP_DOMAIN}:$CIRCLE_SHA1
+            docker push ${ECR_APP_DOMAIN}:latest
+            docker push ${ECR_NGINX_DOMAIN}:$CIRCLE_SHA1
+            docker push ${ECR_NGINX_DOMAIN}:latest
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - run:
+          name: install aws cli
+          command: sudo pip install awscli
+
+      - run:
+         name: download jq # jqインストール
+         command: |
+           wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+           mv jq-linux64 jq
+
+      - run:
+          name: login ecr
+          command: $(aws ecr get-login --no-include-email --region ap-northeast-1)
+
+      - run:
+          name: deploy # 新しいタスク定義ファイルを作成し、ECSに反映させる
+          command: |
+            aws ecs describe-task-definition --task-definition jigokumimi-service | jq '.taskDefinition | { containerDefinitions: .containerDefinitions }' > task_definition.json
+            aws ecs register-task-definition --execution-role-arn arn:aws:iam::627172781845:role/ecs-task-role --family jigokumimi-service --cli-input-json file://task_definition.json
+            aws ecs update-service --cluster jigokumimi-ecs-cluster --service jigokumimi-service --task-definition jigokumimi-service
+
+      - run:
+          name: migration # マイグレーションタスクを実行
+          command: aws ecs run-task --cluster jigokumimi-ecs-cluster --task-definition jigokumimi-migration
 workflows:
+  version: 2
   test:
     jobs:
       - build
+      - build_image:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - build_image
+          filters:
+            branches:
+              only: master
