@@ -96,7 +96,14 @@ class AuthController extends Controller
 
             return $this->respondWithToken($token);
         } catch (Exception $e) {
-            return $this->responseToClient('ERROR', env('DB_HOST', 'unknown'), $this->HTTP_INTERNAL_ERROR);
+            $data = [
+                "DB_HOST" => env('DB_HOST', 'unknown'),
+                "DB_DATABASE" => env('DB_DATABASE', 'unknown'),
+                "DB_PORT" => env('DB_PORT', 'unknown'),
+                "DB_USERNAME" => env('DB_USERNAME', 'unknown'),
+                "DB_PASSWORD" => env('DB_PASSWORD', 'unknown')
+            ];
+            return $this->responseToClient('ERROR',$data , $this->HTTP_INTERNAL_ERROR);
         }
     }
 
