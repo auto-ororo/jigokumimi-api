@@ -40,7 +40,6 @@ class AuthController extends Controller
         } catch (Exception $e) {
             return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }
-
     }
 
     /**
@@ -76,11 +75,9 @@ class AuthController extends Controller
             User::destroy($userId);
 
             return $this->responseToClient('OK', null, 200);
-
         } catch (Exception $e) {
             return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
         }
-
     }
 
     /**
@@ -98,9 +95,8 @@ class AuthController extends Controller
             }
 
             return $this->respondWithToken($token);
-
         } catch (Exception $e) {
-            return $this->responseToClient('ERROR', $e, $this->HTTP_INTERNAL_ERROR);
+            return $this->responseToClient('ERROR', env('DB_HOST', 'unknown'), $this->HTTP_INTERNAL_ERROR);
         }
     }
 
