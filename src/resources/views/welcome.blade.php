@@ -84,7 +84,7 @@
 
         <div class="content">
             <div class="title m-b-md">
-                Jigokumimiiiiiii
+                Jigokumimi
             </div>
         </div>
     </div>

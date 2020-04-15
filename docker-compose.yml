@@ -63,16 +63,5 @@ services:
     ports:
       - ${DB_TESTING_PORT:-13307}:3306
 
-  redis:
-    image: redis:5.0-alpine
-    volumes:
-      - redis-store:/data
-
-  mail:
-    image: mailhog/mailhog
-    ports:
-      - ${MAILHOG_PORT:-18025}:8025
-
 volumes:
   db-store:
-  redis-store:
