@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\User;
+use App\Models\History;
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
@@ -17,15 +17,10 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
-    
-    static $password;
-
+$factory->define(History::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
-        'password' => $password ?: $password = bcrypt('secret'), // password
-        'remember_token' => Str::random(10),
+        'user_id' => $faker->numberBetween(0, 100),
+        'latitude' => $faker->latitude(),
+        'longitude' => $faker->longitude(),
     ];
 });

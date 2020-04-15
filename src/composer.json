@@ -11,7 +11,9 @@
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "tymon/jwt-auth": "1.0.0-rc.5",
+        "webpatser/laravel-uuid": "^3.0"
     },
     "require-dev": {
         "facade/ignition": "^1.4",
@@ -58,6 +60,22 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "tf": [
+            "@php artisan cache:clear --env=testing",
+            "@php artisan config:clear --env=testing",
+            "@php artisan route:clear --env=testing",
+            "@php artisan optimize:clear --env=testing",
+            "@t"
+        ],
+        "t": [
+          "./vendor/bin/phpunit"
+        ],
+        "dc": [
+          "@php artisan cache:clear",
+          "@php artisan config:clear",
+          "@php artisan route:clear",
+          "@php artisan optimize:clear"
         ]
     }
 }

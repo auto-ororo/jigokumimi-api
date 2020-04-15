@@ -16,10 +16,10 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/work",
+	"workspaceFolder": "/work/src",
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": { 
+	"settings": {
     "terminal.integrated.shell.linux": null,
     "php.validate.executablePath": "/usr/local/bin/php",
     "php.executablePath": "/usr/local/bin/php",
@@ -28,8 +28,8 @@
     "php-cs-fixer.autoFixBySemicolon": true,
     "php-cs-fixer.rules": "@PSR2",
     "php-cs-fixer.formatHtml": true,
-    "php-cs-fixer.onsave": true,
-	},
+    "php-cs-fixer.onsave": true
+  },
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
@@ -37,7 +37,8 @@
 		"ikappas.phpcs",
 		"junstyle.php-cs-fixer",
 		"bmewburn.vscode-intelephense-client",
-		"neilbrayfield.php-docblocker"
+		"neilbrayfield.php-docblocker",
+		"donjayamanne.githistory"
 	],
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
@@ -47,7 +48,7 @@
 	"shutdownAction": "stopCompose",
 
 	// Uncomment the next line to run commands after the container is created - for example installing git.
-	"postCreateCommand": "apt-get update && apt-get install -y git",
+  // "postCreateCommand": "apt-get update && apt-get install -y git",
 
 	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
 	// "remoteUser": "vscode"

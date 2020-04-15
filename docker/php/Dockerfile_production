@@ -1,5 +1,5 @@
 FROM php:7.4-fpm-alpine
-LABEL maintainer="ucan-lab <info@u-can.tech>"
+LABEL maintainer="ororo <example@gmail.com>"
 
 SHELL ["/bin/ash", "-oeux", "pipefail", "-c"]
 
@@ -10,20 +10,23 @@ ARG PHP_MANUAL_URL=http://psysh.org/manual/ja/php_manual.sqlite
 
 # timezone
 ARG TZ
+ARG APP_KEY
+ARG JWT_SECRET
 
 # composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 
+# 必要なライブラリをインストール
 RUN apk update && \
   apk add --update --no-cache --virtual=.build-dependencies \
     autoconf=~2.69 \
     gcc=~9.2 \
     g++=~9.2 \
     make=~4.2 \
-    tzdata=2019c-r0 \
-    git=~2.24 && \
+    tzdata=2019c-r0 && \
   apk add --update --no-cache \
+    git=~2.24 \
     icu-dev=~64.2 \
     libzip-dev=~1.5 \
     oniguruma-dev=~6.9 && \
@@ -38,6 +41,16 @@ RUN apk update && \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
   composer config -g process-timeout 3600 && \
   composer config -g repos.packagist composer https://packagist.jp && \
-  composer global require hirak/prestissimo && \
-  composer global require squizlabs/php_codesniffer && \
-  composer global require friendsofphp/php-cs-fixer
+  composer global require hirak/prestissimo
+
+ENV APP_KEY ${APP_KEY}
+ENV JWT_SECRET ${JWT_SECRET}
+
+ENV APP_ROOT /work/src
+RUN mkdir -p $APP_ROOT
+
+# ソースコードコピー
+ADD ./src $APP_ROOT
+ADD ./docker/php/php.ini /usr/local/etc/php/php.ini
+
+WORKDIR $APP_ROOT
