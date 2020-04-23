@@ -2,22 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-
-class ArtistsAroundRequest extends FormRequest
+class ArtistsAroundRequest extends BaseRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -32,16 +18,5 @@ class ArtistsAroundRequest extends FormRequest
             '*.latitude' => 'required',
             '*.popularity' => 'required'
         ];
-    }
-    protected function failedValidation(Validator $validator)
-    {
-        $res = response()->json([
-            'message' => $validator->errors(),
-        ], 400);
-        throw new HttpResponseException($res);
-    }
-
-    public function withValidator(Validator $validator)
-    {
     }
 }
